@@ -21,7 +21,7 @@ shell字符串
     - 单引号、双引号与PHP类似，不同的是单引号中完全不会转义
 
     - 字符串操作： 拼接无需操作符
-                  获取字符串操作 string="abcd"
+                  获取字符串长度 string="abcd"
                                 echo ${#string}
                   提取字符串操作 echo ${string:2:2} # 输出 cd
                   查找子字符串   echo `expr index "$string" ac`
@@ -75,8 +75,12 @@ shell运算符
           除法： / `expr $a / $b`
           取余： % `expr $a % $b`
           赋值： = a=$b
-          相等： == [ $a == $b ]
-          不相等： != [ $a != $b ]
+          相等： == [ $a == $b ]    # 比较数字
+          不相等： != [ $a != $b ]  # 比较数字
+
+    - 另外的运算方式
+        - 条件表达式 $result=$[value1 + value2]
+        - apple方式 $result=$(($value1 + $value2)) 此处乘法*不需要转义
 
     - 关系运算符：只支持数字，除非字符串的值是数字
         - 相等：   -eq [ $a -eq $b ]
@@ -139,3 +143,87 @@ shell echo命令
             -s 隐藏输入内容
         - 注意 read命令读入词组按空格进行分隔，如果词组数量大于需要参数个数
                多出的词组将作为整体被最后一个参数接收
+
+shell printf命令
+
+    - printf命令由POSIX标准定义，因此移植性比echo好
+        printf format-string [arguments...]
+    - 字符串遵循shell规则，其中"\c"只在%b参数中生效
+
+shell test 命令
+
+    - 检查某个条件是否成立，可以对数值、字符、文件进行测试
+        实际上类似条件判断 test -e ./nofile -o -e hello.c
+
+shell 流程控制
+
+    -区别：流程控制主体不可为空
+
+    - if语句： if condition1
+               then
+                   command1
+               elif condition2
+               then
+                   conmand2
+               else
+                   conmand3
+               fi
+
+    - for循环： 指令部分变量名不用加$美元符号
+        列表格式 for var in item1 item2 ... itemN
+                do
+                    command
+                done
+        c格式 for ((expr1;expr2;expr3))
+              do
+                  command
+              done
+        for循环还可以读取:
+            范围       for num in {1..10}
+            命令行输出  for username in `awk -F:'{print $1}' /etc/passwd`
+            传入参数    for params
+
+    - while语句：  while condition
+                   do
+                       command
+                   done
+        无限循环 'while ：' or 'while true' or 'for (( ; ; ))'
+
+    - until语句：  until condition
+                  do
+                      command
+                  done
+
+    - case语句： 一旦模式匹配，执行完匹配模式后不再继续其他模式
+        结构 case $value in
+             1)
+                 command1
+                 ;;
+             2|3)
+                 command2
+                 ;;
+             *)
+                 command*
+                 ;;
+             esac
+
+    - continue 与 break： 与c语言类似
+
+shell 函数
+
+    - 定义格式  func_name(){
+                    command
+                }
+    
+    - 返回值 最后一行的命令运行结果将返回 成为外部变量
+            retrun 数值 将返回数值0~255，通过$?即可读取
+                (没有指定return时，$?为0表示没有错误)
+        示例：
+            addDemo(){
+                result=$(($1 + $2))
+            }
+            echo result # 内容为$1+$2
+            echo $?     # 内容为0
+
+    - 参数 通过$n 命令读取， ${10}表示第十个参数 "$10"表示"${1}0"
+
