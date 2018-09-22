@@ -52,7 +52,7 @@ shell注释
     - 多行注释： :<<EOF          :<<'             :<<!
                 注释内容         注释内容          注释内容
                 EOF             '                !
-
+EOF
 shell传参
 
     - 获取参数： 获取单个参数 $n n代表一个数字 $0 代表执行的文件名
@@ -227,3 +227,33 @@ shell 函数
 
     - 参数 通过$n 命令读取， ${10}表示第十个参数 "$10"表示"${1}0"
 
+shell 输入输出重定向
+
+    - 输出重定向 command > file      echo "hello" > users
+        追加    command >> file
+
+    - 输入重定向 command < file      wc -l < users
+        追加    command << file
+file
+    - 重定向与文件
+        标准输入文件->stdin  文件描述符->0
+        标准输出文件->stdout 文件描述符->1
+        标准错误文件->stderr 文件描述符->2
+
+        将输出文件n、m合并  command > file n>&m
+        将输入文件n、m合并  command > file n<&m
+
+    - Here Document
+        command << delimeter
+            document
+delimeter
+        将两个dilimeter之间的内容作为输入传入给command
+        注意：结尾的delimeter一定要顶格写，前后不能有任何字符
+
+    - /dev/null 特殊文件，可以达到屏蔽输出的作用  $command > /dev/null 2>&1
+
+shell 包含文件
+
+    - 包含标识符 .           . ./file_name  #注意两个点之间有空格
+                source      source ./file_name
+        注意：被包含的脚本文件不需要执行权限
